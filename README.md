@@ -1,4 +1,4 @@
-# Stoic Euclido Vault  
+# Stoic Euclido  
 
 This is a secure wallet for storing digital assets, that is spl tokens, offering extra layers of security 
 such as delayed or restricted access and withdrawal whitelist.   

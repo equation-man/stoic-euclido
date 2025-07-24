@@ -18,7 +18,7 @@ pub fn handler(ctx: Context<InitializeVault>) -> Result<()> {
     vault_logs.vault_auth_bump = ctx.bumps.vault_authority;
     vault_logs.vault_auth = ctx.accounts.vault_authority.key();
 
-    msg!("Euclid Vault created!");
+    msg!("Stoic Euclido Vault created!");
 
     Ok(())
 }

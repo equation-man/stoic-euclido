@@ -10,7 +10,7 @@ pub fn handler(ctx: Context<LockFunds>, lock_amount: u64) -> Result<()> {
     check_token_program(ctx.accounts.token_program.key());
     
     msg!("Lock initial total: {}", ctx.accounts.vault_logs.amount);
-    msg!("User entry initial balance: {}", ctx.accounts.user_vault_entry.balance);
+    msg!("User entry amount: {}", ctx.accounts.user_vault_entry.balance);
 
     let decimals = ctx.accounts.token_mint.decimals;
     // Transfering the tokens
@@ -22,11 +22,11 @@ pub fn handler(ctx: Context<LockFunds>, lock_amount: u64) -> Result<()> {
 
     // Update the vault log amount.
     vault_logs.amount = vault_logs.amount.checked_add(lock_amount).unwrap();
-    msg!("Current vault locked total is: {}", vault_logs.amount);
+    msg!("Updated total amount locked in the vault: {}", vault_logs.amount);
 
     // Update the user vault entry.
     user_vault_entry.balance = user_vault_entry.balance.checked_add(lock_amount).unwrap();
-    msg!("User lock entry balance: {}", user_vault_entry.balance);
+    msg!("Updated wallet amount: {}", user_vault_entry.balance);
     user_vault_entry.created_at = Clock::get().unwrap().unix_timestamp;
 
     // IMPLEMENT LOCK DURATION HERE, FEE CALCULATION TO ADJUST AMOUNT WITHDRAWABLE.
