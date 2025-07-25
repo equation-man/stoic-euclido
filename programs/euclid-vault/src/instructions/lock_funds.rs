@@ -54,7 +54,7 @@ pub struct LockFunds<'info> {
         seeds = [VAULT_AUTH_SEED.as_bytes()],
         bump
     )]
-    pub vault_authority: UncheckedAccount<'info>
+    pub vault_authority: UncheckedAccount<'info>,
     #[account(
         mut,
         seeds = [token_mint.key().as_ref(), vault_authority.key().as_ref(), VAULT_SEED.as_bytes()],
@@ -72,7 +72,7 @@ pub struct LockFunds<'info> {
         constraint = user_token_account.mint == vault_logs.token_mint @ EuclidVaultError::InvalidMintError,
         token::token_program = token_program
     )]
-    pub user_token_account: InterfaceAccount<'info, token_interface:TokenAccount><
+    pub user_token_account: InterfaceAccount<'info, token_interface::TokenAccount><
     #[account(
         mut,
         seeds = [user.key().as_ref(), VAULT_ENTRY_SEED.as_bytes()],
