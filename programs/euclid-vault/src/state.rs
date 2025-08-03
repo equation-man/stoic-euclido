@@ -1,7 +1,7 @@
 //! CONTAINS STATE DATA STRUCTURES OR PDAs.
 use {
     anchor_lang::prelude::*,
-    solana_program::{pubkey::Pubkey},
+    anchor_lang::solana_program::{pubkey::Pubkey},
 };
 
 
@@ -31,5 +31,5 @@ pub struct VaultEntry {
     pub balance: u64,
     pub withdrawable: u64,
     pub created_at: i64,
-    pub lock_time: i64,
+    pub lock_duration: i64,
 }

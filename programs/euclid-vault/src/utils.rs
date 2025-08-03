@@ -1,7 +1,7 @@
 //! CONTAINS HELPER FUNCTIONS.
 use { 
     anchor_lang::prelude::*,
-    solana_program::{pubkey::Pubkey}, 
+    anchor_lang::solana_program::{pubkey::Pubkey}, 
     anchor_spl::{
         token::ID as TOKEN_ID,
         token_2022::ID as TOKEN22_ID

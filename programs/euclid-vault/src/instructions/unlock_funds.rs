@@ -1,8 +1,11 @@
 //! THIS IS THE INSTRUCTION TO UNLOCK OR WITHDRAW FUNDS FROM THE VAULT
 use {
-    anchor_lang::prelude::*;
+    anchor_lang::prelude::*,
     crate::{state::*, utils::*, errors::*},
-    anchor_spl::{token_interface},
+    anchor_spl::{
+        token_interface,
+        token_2022::{TransferChecked, transfer_checked},
+    },
     std::mem::size_of
 };
 
@@ -13,13 +16,13 @@ pub fn handler(ctx: Context<UnlockFunds>, withdraw_amount: u64) -> Result<()> {
     let balance = user_vault_entry.balance;
     let decimals = ctx.accounts.token_mint.decimals;
 
-    msg!("The stake balance is: {}", user_vault_entry.balance);
+    msg!("The stake balance is: {}", balance);
     msg!("Withdrawal amount is: {}", withdraw_amount);
     msg!("The total vault balance is: {}", ctx.accounts.vault_logs.amount);
 
     // Verify if the user have >= requested withdrawal amount in their stake.
-    if withdraw_amount > user_vault_entry.balance {
-        return Err(EuclidVaultError::InvalidAccountBalance);
+    if withdraw_amount > balance {
+        return Err(EuclidVaultError::InvalidAccountBalance.into());
     }
 
     // Program signer seeds
@@ -28,18 +31,18 @@ pub fn handler(ctx: Context<UnlockFunds>, withdraw_amount: u64) -> Result<()> {
     let signer = &[&auth_seeds[..]];
 
     // Transfer tokens
-    transfer_checked(ctx.accounts.transfer_checked_ctx(signer), amount, decimals)?;
+    transfer_checked(ctx.accounts.transfer_checked_ctx(signer), withdraw_amount, decimals)?;
 
     // Borrow mutable reference to update the state of the accounts
     let vault_logs = &mut ctx.accounts.vault_logs;
     let user_entry = &mut ctx.accounts.user_vault_entry;
 
     // Subract the transferred amount from the pool total.
-    vault_logs.amount = vault_logs.amount.checked_sub(withdrawa_amount).unwrap();
+    vault_logs.amount = vault_logs.amount.checked_sub(withdraw_amount).unwrap();
     msg!("The total vault balance is: {}", vault_logs.amount);
 
     // Update the stake entry.
-    user_entry.balance = user_entry.balance.checked_sub(withdrawal_amount).unwrap();
+    user_entry.balance = user_entry.balance.checked_sub(withdraw_amount).unwrap();
     user_entry.created_at = Clock::get().unwrap().unix_timestamp;
 
     Ok(())
@@ -72,7 +75,7 @@ pub struct UnlockFunds<'info> {
         bump = vault_logs.bump,
         token::token_program = token_program
     )]
-    pub token_vault: InterfaceAccount<'info, token_interface::ToknAccount>,
+    pub token_vault: InterfaceAccount<'info, token_interface::TokenAccount>,
     #[account(
         mut,
         constraint = user.key() == user_vault_entry.user @ EuclidVaultError::InvalidUserError,
@@ -96,7 +99,7 @@ pub struct UnlockFunds<'info> {
 
 impl<'info> UnlockFunds<'info>{
     // transfer_checked for Token22
-    pub fn transfer_checked_ctx<'a>($'a self, seeds: &'a [&[&[u8]]]) -> CpiContext<'_, '_, '_, 'info, TransferChecked<'info>> {
+    pub fn transfer_checked_ctx<'a>(&'a self, seeds: &'a [&[&[u8]]]) -> CpiContext<'_, '_, '_, 'info, TransferChecked<'info>> {
         let cpi_program = self.token_program.to_account_info();
         let cpi_accounts = TransferChecked {
             from: self.token_vault.to_account_info(),

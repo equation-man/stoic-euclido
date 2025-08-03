@@ -7,7 +7,7 @@ use {
 };
 
 pub fn handler(ctx: Context<InitializeVault>) -> Result<()> {
-    check_token_program(ctx.accounts.token_program.key();
+    check_token_program(ctx.accounts.token_program.key());
 
     // Initialize vault log
     let vault_logs = &mut ctx.accounts.vault_logs;
@@ -60,6 +60,7 @@ pub struct InitializeVault<'info> {
     pub token_vault: InterfaceAccount<'info, token_interface::TokenAccount>,
 
     // payer, pays for creation of accounts.
+    #[account(mut)]
     pub payer: Signer<'info>,
     pub token_program: Interface<'info, token_interface::TokenInterface>,
     pub system_program: Program<'info, System>,

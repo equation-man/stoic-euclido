@@ -1,9 +1,11 @@
 //! THIS IS THE INSTRUCTION TO LOCK FUNDS.
 use {
-    anchor_lang::prelude::*;
-    crate::{state::*, utils::*},
-    anchor_spl::{token_interface},
-    std::mem::size_of
+    anchor_lang::prelude::*,
+    crate::{state::*, utils::*, errors::*},
+    anchor_spl::{
+        token_interface,
+        token_2022::{TransferChecked, transfer_checked},
+    },
 };
 
 pub fn handler(ctx: Context<LockFunds>, lock_amount: u64) -> Result<()> {
@@ -72,7 +74,7 @@ pub struct LockFunds<'info> {
         constraint = user_token_account.mint == vault_logs.token_mint @ EuclidVaultError::InvalidMintError,
         token::token_program = token_program
     )]
-    pub user_token_account: InterfaceAccount<'info, token_interface::TokenAccount><
+    pub user_token_account: InterfaceAccount<'info, token_interface::TokenAccount>,
     #[account(
         mut,
         seeds = [user.key().as_ref(), VAULT_ENTRY_SEED.as_bytes()],

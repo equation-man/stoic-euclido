@@ -1,14 +1,14 @@
 //! CUSTOM ERRORS FOR THE TOKEN PROGRAM
 use anchor_lang::prelude::*;
 
-#[erro_code]
+#[error_code]
 pub enum EuclidVaultError {
-    #[msg!("The token mint is invalid")]
+    #[msg("The token mint is invalid")]
     InvalidMintError,
-    #[msg!("Invalid user provided")]
+    #[msg("Invalid user provided")]
     InvalidUserError,
-    #[msg!("Mathematical overflow occured")]
+    #[msg("Mathematical overflow occured")]
     MathematicalOverflowError,
-    #[msg!("Maximum balance exceeded")]
+    #[msg("Maximum balance exceeded")]
     InvalidAccountBalance
 }
